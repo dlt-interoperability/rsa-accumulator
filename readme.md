@@ -18,6 +18,20 @@ ledger. It is therefore expected that for every block produced, multiple
 elements will need to be added and removed from the accumulated set. Because of
 this, batch updates has also been implemented in this library [4].
 
+# Building
+
+The project can be built with:
+
+```
+./gradlew build
+```
+
+# Coding Conventions
+
+This library uses functional programming principles whereever possible. For a
+detailed overview of the conventions see the [Coding
+Conventions](coding-conventions.md) document.
+
 ## References
 
 - [1] Benaloh and de Mar, 1994
