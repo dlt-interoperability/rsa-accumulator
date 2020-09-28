@@ -6,7 +6,8 @@ used, primarily for error handling with the `Either` type.
 
 Conventions:
 
-- Use immutable state.
+- Explicit state management using immutable state and the State monad to model
+  state changes.
 - Catch exceptions as close as possible to their source and convert to [Arrow's
   `Either`
   type](https://arrow-kt.io/docs/apidocs/arrow-core-data/arrow.core/-either/).

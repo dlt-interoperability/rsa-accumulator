@@ -34,7 +34,21 @@ Conventions](coding-conventions.md) document.
 
 ## References
 
-- [1] Benaloh and de Mar, 1994
-- [2] Camenisch and Lysyanskaya, 2002
-- [3] Li, Li, Xue, 2007
-- [4] Boneh, Bunz, Fisch, 2019
+- [1](https://link.springer.com/content/pdf/10.1007%2F3-540-48285-7_24.pdf)
+  Benaloh, J. and de Mar, M., 1994, One-Way Accumulators: A Decentralized
+  Alternative to Digital Signatures, International Conference on the Theory and
+  Applications of Cryptographic Techniques, vol 765, pp 274-285
+- [2](https://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02a.pdf) Camenisch, J. and Lysyanskaya, A., 2002, Dynamic accumulators and
+  application to efficient revocation of anonymous credentials, Lecture Notes in
+  Computer Science (including subseries Lecture Notes in Artificial Intelligence
+  and Lecture Notes in Bioinformatics), vol 2442, pp 61-76
+- [3](https://www.cs.purdue.edu/homes/ninghui/papers/accumulator_acns07.pdf) Li,
+  J., Li, N., Xue, R., 2007, Universal accumulators with efficient nonmembership
+  proofs, Lecture Notes in Computer Science (including subseries Lecture Notes
+  in Artificial Intelligence and Lecture Notes in Bioinformatics), vol 4521, pp
+  253-269
+- [4](https://eprint.iacr.org/2018/1188.pdf) Boneh, D., Bunz, B., Fisch, B.,
+  2019, Batching Techniques for Accumulators with Applications to IOPs and
+  Stateless Blockchains, Lecture Notes in Computer Science (including subseries
+  Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics),
+  vol 11692, pp 561-586
