@@ -4,11 +4,11 @@
 package res.dlt.accumulator
 
 import kotlin.test.Test
-import kotlin.test.assertTrue
+import kotlin.test.assertNotNull
 
 class RSAAccumulatorTest {
-    @Test fun testSomeRSAAccumulatorMethod() {
-        val classUnderTest = RSAAccumulator()
-        assertTrue(classUnderTest.someLibraryMethod(), "someLibraryMethod should return 'true'")
+    @Test fun createRSAAccumulator() {
+        val accumulator = RSAAccumulator.newInstance()
+        assertNotNull(accumulator.a, "accumulator should have property a")
     }
 }
