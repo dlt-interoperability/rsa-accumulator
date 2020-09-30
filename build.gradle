@@ -16,4 +16,7 @@ dependencies {
 
     // arrow-mtl has a dependency on arrow-mtl-data and arrow-core
     implementation "io.arrow-kt:arrow-mtl:0.11.0"
+
+    // Google Guava library is used for it's SHA256 hashing function
+    implementation "com.google.guava:guava:29.0-jre"
 }
