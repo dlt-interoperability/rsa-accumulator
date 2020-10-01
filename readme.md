@@ -52,3 +52,10 @@ Conventions](coding-conventions.md) document.
   Stateless Blockchains, Lecture Notes in Computer Science (including subseries
   Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics),
   vol 11692, pp 561-586
+
+## TODO
+
+- Write some notes on the selection of the RSA modulus size. How does this
+  relate to security?
+- Write some notes on the prime certainty constant used.
+- Delete function using the trapdoor function

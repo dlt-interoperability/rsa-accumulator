@@ -28,8 +28,10 @@ data class RSAAccumulator(
                     seed2 = seed2)
             val n = p * q
 
-            // draw random number within range of [0,n-1]
-            val a0 = randomBigInteger(BigInteger.ZERO, n, seed3)
+            // Select a quadratic residue modulo n to use as the generator for the accumulator.
+            // An integer is a quadratic residue modulo n if there exists an integer x such that
+            // x^2 = q mod n (where the "=" is congruence).
+            val a0 = randomBigInteger(BigInteger.ZERO, n, seed3).pow(2).mod(n)
             val a = a0
 
             return RSAAccumulator(a, a0, p, q, n, hashMapOf())
@@ -49,7 +51,9 @@ fun add(x: BigInteger) = State<RSAAccumulator, BigInteger> { accumulator ->
     }
 }
 
-fun delete(x: BigInteger): BigInteger = TODO()
+fun delete(x: BigInteger) = State<RSAAccumulator, BigInteger> { accumulator ->
+    Tuple2(accumulator, x)
+}
 
 fun createProof(x: BigInteger): Boolean = TODO()
 

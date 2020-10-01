@@ -7,7 +7,10 @@ used, primarily for error handling with the `Either` type.
 Conventions:
 
 - Explicit state management using immutable state and the State monad to model
-  state changes.
+  state changes. See the [Arrow state
+  documentation](https://arrow-kt.io/docs/arrow/mtl/state/) and [this blog
+  post](https://jorgecastillo.dev/state-monad) for information on how (and why)
+  to use the State monad for managing state.
 - Catch exceptions as close as possible to their source and convert to [Arrow's
   `Either`
   type](https://arrow-kt.io/docs/apidocs/arrow-core-data/arrow.core/-either/).
