@@ -12,9 +12,8 @@ data class RSAAccumulator(
         val data: HashMap<BigInteger, BigInteger>
 ) {
     companion object {
-        private const val RSA_KEY_SIZE = 3072
-        private const val RSA_PRIME_SIZE = RSA_KEY_SIZE / 2
-        const val ACCUMULATED_PRIME_SIZE = 128
+        private const val RSA_MOD_SIZE = 3072
+        private const val RSA_PRIME_SIZE = RSA_MOD_SIZE / 2
         const val PRIME_CERTAINTY = 5
 
         fun newInstance(
@@ -37,14 +36,13 @@ data class RSAAccumulator(
     }
 }
 
-// TODO: Fix this to include the new data map
 fun add(
         accumulator: RSAAccumulator,
         x: BigInteger
 ): Tuple2<RSAAccumulator, BigInteger> = if (accumulator.data.containsKey(x)) {
     Tuple2(accumulator, x)
 } else {
-    val (hashPrime, nonce) = hashToPrime(x, RSAAccumulator.ACCUMULATED_PRIME_SIZE)
+    val (hashPrime, nonce) = hashToPrime(x)
     val accumulatorValue = accumulator.a.modPow(hashPrime, accumulator.n)
     accumulator.data[hashPrime] = nonce
     val newAccumulator = accumulator.copy(a = accumulatorValue)
@@ -55,4 +53,4 @@ fun delete(x: BigInteger): BigInteger = TODO()
 
 fun createProof(x: BigInteger): Boolean = TODO()
 
-fun isMember(x: BigInteger): Boolean = TODO()
+fun isMember(accumulator: RSAAccumulator, x: BigInteger): Boolean = accumulator.data.containsKey(hashToPrime(x).a)

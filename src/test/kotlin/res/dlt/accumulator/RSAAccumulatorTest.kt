@@ -14,6 +14,6 @@ class RSAAccumulatorTest {
         val elementToAdd = BigInteger.ONE
         val (newAccumulator, addedElement) = add(accumulator, elementToAdd)
         assertEquals(elementToAdd, addedElement, "Function should return added element")
-//        assertTrue(newAccumulator.data.containsKey(elementToAdd), "New accumulator should contain added element")
+        assertTrue(isMember(accumulator, elementToAdd), "New accumulator should contain added element")
     }
 }

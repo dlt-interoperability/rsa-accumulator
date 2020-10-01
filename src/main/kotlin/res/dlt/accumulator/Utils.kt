@@ -63,13 +63,12 @@ tailrec fun randomBigInteger(
  */
 tailrec fun hashToPrime(
         x: BigInteger,
-        bitLength: Int = 120,
         candidateNonce: BigInteger = BigInteger.ZERO
 ): Tuple2<BigInteger, BigInteger> {
     val candidatePrime = BigInteger(Hashing.sha256().hashBytes((x + candidateNonce).toByteArray()).asBytes())
     return if (candidatePrime.isProbablePrime(RSAAccumulator.PRIME_CERTAINTY)) {
         Tuple2(candidatePrime, candidateNonce)
     } else {
-        hashToPrime(x, bitLength, candidateNonce + BigInteger.ONE)
+        hashToPrime(x, candidateNonce + BigInteger.ONE)
     }
 }
