@@ -1,5 +1,6 @@
 package res.dlt.accumulator
 
+import arrow.mtl.run
 import java.math.BigInteger
 import kotlin.test.*
 
@@ -12,8 +13,8 @@ class RSAAccumulatorTest {
     @Test fun addElement() {
         val accumulator = RSAAccumulator.newInstance()
         val elementToAdd = BigInteger.ONE
-        val (newAccumulator, addedElement) = add(accumulator, elementToAdd)
+        val (newAccumulator, addedElement) = add(elementToAdd).run(accumulator)
         assertEquals(elementToAdd, addedElement, "Function should return added element")
-        assertTrue(isMember(accumulator, elementToAdd), "New accumulator should contain added element")
+        assertTrue(isMember(elementToAdd).run(newAccumulator).b, "New accumulator should contain added element")
     }
 }

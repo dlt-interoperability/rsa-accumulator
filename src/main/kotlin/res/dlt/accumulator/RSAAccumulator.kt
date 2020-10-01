@@ -1,6 +1,7 @@
 package res.dlt.accumulator
 
 import arrow.core.Tuple2
+import arrow.mtl.State
 import java.math.BigInteger
 
 data class RSAAccumulator(
@@ -36,21 +37,22 @@ data class RSAAccumulator(
     }
 }
 
-fun add(
-        accumulator: RSAAccumulator,
-        x: BigInteger
-): Tuple2<RSAAccumulator, BigInteger> = if (accumulator.data.containsKey(x)) {
-    Tuple2(accumulator, x)
-} else {
-    val (hashPrime, nonce) = hashToPrime(x)
-    val accumulatorValue = accumulator.a.modPow(hashPrime, accumulator.n)
-    accumulator.data[hashPrime] = nonce
-    val newAccumulator = accumulator.copy(a = accumulatorValue)
-    Tuple2(newAccumulator, x)
+fun add(x: BigInteger) = State<RSAAccumulator, BigInteger> { accumulator ->
+    if (accumulator.data.containsKey(x)) {
+        Tuple2(accumulator, x)
+    } else {
+        val (hashPrime, nonce) = hashToPrime(x)
+        val accumulatorValue = accumulator.a.modPow(hashPrime, accumulator.n)
+        accumulator.data[hashPrime] = nonce
+        val newAccumulator = accumulator.copy(a = accumulatorValue)
+        Tuple2(newAccumulator, x)
+    }
 }
 
 fun delete(x: BigInteger): BigInteger = TODO()
 
 fun createProof(x: BigInteger): Boolean = TODO()
 
-fun isMember(accumulator: RSAAccumulator, x: BigInteger): Boolean = accumulator.data.containsKey(hashToPrime(x).a)
+fun isMember(x: BigInteger) = State<RSAAccumulator, Boolean> { accumulator ->
+    Tuple2(accumulator, accumulator.data.containsKey(hashToPrime(x).a))
+}
