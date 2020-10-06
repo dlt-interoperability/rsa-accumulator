@@ -1,22 +1,22 @@
 # RSA Accumulator
 
 This is a Kotlin implementation of an RSA accumulator, originally described by
-Benaloh and de Mar [1]. An accumulator is a cryptographic primitive that
+Benaloh and de Mar [[1]](#references). An accumulator is a cryptographic primitive that
 generates a succinct digest of elements in a set in a way that allows for proof
 of membership (called a witness) of an element in the set without revealing
 other information about the set.
 
 This library implements a _dynamic_ RSA accumulator, meaning the accumulator can
-be efficiently updated when elements are added and removed from the set [2].
+be efficiently updated when elements are added and removed from the set [[2]](#references).
 "Efficiently", in this case, means independent of the size of the accumulated set.
 The method for performing dynamic updates uses auxiliary information about the
-accumulator, as described by Li et. al. [3].
+accumulator, as described by Camenisch and Lysyanskaya [[2]](#references) and Li et. al. [[3]](#references).
 
 This library is intended to be used to allow for verifiable observation of state
 from a blockchain, where the accumulator represents a digest of the entire
 ledger. It is therefore expected that for every block produced, multiple
 elements will need to be added and removed from the accumulated set. Because of
-this, batch updates has also been implemented in this library [4].
+this, batch updates has also been implemented in this library [[4]](#references).
 
 # Building
 
@@ -38,7 +38,8 @@ Conventions](coding-conventions.md) document.
   Benaloh, J. and de Mar, M., 1994, One-Way Accumulators: A Decentralized
   Alternative to Digital Signatures, International Conference on the Theory and
   Applications of Cryptographic Techniques, vol 765, pp 274-285
-- [2](https://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02a.pdf) Camenisch, J. and Lysyanskaya, A., 2002, Dynamic accumulators and
+- [2](https://groups.csail.mit.edu/cis/pubs/lysyanskaya/cl02a.pdf) Camenisch, J.
+  and Lysyanskaya, A., 2002, Dynamic accumulators and
   application to efficient revocation of anonymous credentials, Lecture Notes in
   Computer Science (including subseries Lecture Notes in Artificial Intelligence
   and Lecture Notes in Bioinformatics), vol 2442, pp 61-76
@@ -55,7 +56,14 @@ Conventions](coding-conventions.md) document.
 
 ## TODO
 
-- Write some notes on the selection of the RSA modulus size. How does this
-  relate to security?
+- p and q should be safe primes: p = 2p'+ 1, q = 2q' + 1, where p', q' are
+  primes. RSA modulus n has length k.
+- The elements to be accumulated need to be in the set {e in primes; e notequal
+  p', q' and A <= e <= B} where A and B are chosen with arbitrary polynomial
+  dependence on the security parameter k, as long as 2 < A and B < A^2.
+- Write some notes on the selection of the RSA modulus size and how it relates
+  to security.
 - Write some notes on the prime certainty constant used.
-- Delete function using the trapdoor function
+- Look into how the batching method proposed by Boneh et al [[4]](#references)
+  is different from the method proposed by Camenisch and Lysyanskaya
+  [[2]](#references).
