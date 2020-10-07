@@ -2,6 +2,7 @@ package res.dlt.accumulator
 
 import com.google.common.hash.Hashing
 import arrow.core.Tuple2
+import arrow.core.Tuple3
 import com.google.common.io.BaseEncoding
 import java.math.BigInteger
 import kotlin.math.pow
@@ -72,3 +73,49 @@ tailrec fun hashToPrime(
         hashToPrime(x, candidateNonce + BigInteger.ONE)
     }
 }
+
+/**
+ * The inverseModPhi function calculates the modular inverse of x mod phi(n),
+ * which is the Euler totient function: phi(n) = (p - 1)(q - 1). When the accumulator
+ * is raised to the power of the inverse mod phi, this effectively removes element
+ * from the accumulator. This is used when deleting an element from the set,
+ * and when creating a proof of membership.
+ *
+ * @param x This is the prime representation of a key.
+ * @param n This is the RSA modulus for the accumulator.
+ * @param phi This is the value of the Euler totient function phi(n) = (p - 1)(q - 1).
+ */
+fun inverseModPhi(x: BigInteger, phi: BigInteger): BigInteger {
+    val (_, _, xPrimeInverse) = extendedEuclid(phi, x)
+    val isInverse = (x * xPrimeInverse) % phi
+//    println("xPrime is inverse of x? $isInverse")
+    return xPrimeInverse.mod(phi)
+}
+
+/**
+ * Given integers a and b where a >= b >= 0, the extended Euclid algorithm
+ * can be used to find their greatest common divisor, d, and integers s and t
+ * that fulfill as + bt = d. When a and b are coprime, meaning their greatest
+ * common divisor is 1, the integer t is the inverse of b modulo a.
+ */
+tailrec fun extendedEuclid(
+        a: BigInteger,
+        b: BigInteger,
+        s: BigInteger = BigInteger.ONE,
+        sPrime: BigInteger = BigInteger.ZERO,
+        t: BigInteger = BigInteger.ZERO,
+        tPrime: BigInteger = BigInteger.ONE
+): Tuple3<BigInteger, BigInteger, BigInteger> =
+        if (b == BigInteger.ZERO) {
+            Tuple3(a, s, t)
+        } else {
+            val q = a / b // this is the floor of a / b
+            extendedEuclid(
+                    a = b,
+                    s = sPrime,
+                    t = tPrime,
+                    b = a % b,
+                    sPrime = s - sPrime * q,
+                    tPrime = t - tPrime * q
+            )
+        }

@@ -1,5 +1,8 @@
 package res.dlt.accumulator
 
+import arrow.core.Left
+import arrow.core.Right
+import arrow.core.flatMap
 import arrow.mtl.run
 import java.math.BigInteger
 import kotlin.test.*
@@ -15,22 +18,51 @@ class RSAAccumulatorTest {
         val elementToAdd = BigInteger.ONE
         val (newAccumulator, addedElement) = add(elementToAdd).run(accumulator)
         assertEquals(elementToAdd, addedElement, "Function should return added element")
-        assertTrue(isMember(elementToAdd).run(newAccumulator).b, "New accumulator should contain added element")
+        assertTrue(newAccumulator.data.contains(elementToAdd), "New accumulator should contain added element")
     }
 
     @Test fun deleteElement() {
         val accumulator = RSAAccumulator.newInstance()
-        val elementOne = BigInteger.ONE
-        val (newAccumulator, _) = add(elementOne).run(accumulator)
-        val elementToDelete = BigInteger.TEN
-        val (newAccumulatorTwo, _) = add(elementToDelete).run(newAccumulator)
-        val (newAccumulatorAfterDelete, deletedElement) =
-                delete(elementToDelete).run(newAccumulatorTwo)
-        val isDeletedElementMember = isMember(elementToDelete).run(newAccumulatorAfterDelete).b
-        val isInitialElementMember = isMember(elementOne).run(newAccumulatorAfterDelete).b
 
-        assertEquals(elementToDelete, deletedElement, "Function should return deleted element")
-        assertFalse(isDeletedElementMember, "Accumulator should not contain deleted element")
-        assertTrue(isInitialElementMember, "Accumulator should still contain initial element")
+        listOf(BigInteger("2"),
+                BigInteger("3"),
+                BigInteger("4"),
+                BigInteger("5"),
+                BigInteger("6"),
+                BigInteger("7"),
+                BigInteger("8"))
+                .zipWithNext { element1, element2 -> Pair(element1, element2) }
+                .fold(accumulator, ::addAndDelete)
     }
+
+    @Test fun createAndVerifyProof() {
+        val accumulator = RSAAccumulator.newInstance()
+
+        listOf(BigInteger("2"),
+                BigInteger("3"),
+                BigInteger("4"),
+                BigInteger("5"),
+                BigInteger("6"),
+                BigInteger("7"),
+                BigInteger("8")).fold(accumulator, ::addCreateProofAndVerify)
+    }
+}
+
+fun addCreateProofAndVerify(accumulator: RSAAccumulator, element: BigInteger): RSAAccumulator {
+    val newAccumulator = add(element).run(accumulator).a
+    createProof(element).run(newAccumulator).b.map {
+        assertTrue(verifyProof(it.proof, it.key, it.n, it.a), "Proof should be valid")
+    }
+    return newAccumulator
+}
+
+fun addAndDelete(accumulator: RSAAccumulator, elementPair: Pair<BigInteger, BigInteger>): RSAAccumulator {
+    val newAcc1 = add(elementPair.first).run(accumulator).a
+    val newAcc2 = add(elementPair.second).run(newAcc1).a
+    assertTrue(newAcc2.data.contains(elementPair.second))
+    val newAcc3 = delete(elementPair.second).run(newAcc2).a
+    assertEquals(newAcc1.a, newAcc3.a,
+            "The accumulator with element 2 deleted should be the same as the one before it was added")
+    assertFalse(newAcc2.data.contains(elementPair.second))
+    return newAcc3
 }
