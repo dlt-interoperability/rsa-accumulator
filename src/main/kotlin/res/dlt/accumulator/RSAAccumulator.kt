@@ -14,8 +14,8 @@ data class RSAAccumulator(
         val data: HashMap<BigInteger, BigInteger>
 ) {
     companion object {
-        private const val RSA_MOD_SIZE = 3072
-        private const val RSA_PRIME_SIZE = RSA_MOD_SIZE / 2
+        private const val RSA_MOD_SIZE = 1024
+        private const val RSA_PRIME_SIZE = RSA_MOD_SIZE / 2 - 1
         const val PRIME_CERTAINTY = 5
 
         fun newInstance(
@@ -23,16 +23,17 @@ data class RSAAccumulator(
                 seed2: Long = 1098765432109876543,
                 seed3: Long = 5647382910293847565,
         ): RSAAccumulator {
-            val (p, q) = generateTwoDistinctPrimes(
+            val (p, q) = generateTwoDistinctSafePrimes(
                     bitLength = RSA_PRIME_SIZE,
                     seed1 = seed1,
-                    seed2 = seed2)
+                    seed2 = seed2,
+                    certainty = PRIME_CERTAINTY)
             val n = p * q
             val phi = (p - BigInteger.ONE) * (q - BigInteger.ONE)
 
             // Select a quadratic residue modulo n to use as the generator for the accumulator.
             // An integer is a quadratic residue modulo n if there exists an integer x such that
-            // x^2 = q mod n (where the "=" is congruence).
+            // x^2 is congruent to q mod n.
             val a0 = randomBigInteger(BigInteger.ZERO, n, seed3).pow(2).mod(n)
             val a = a0
 
