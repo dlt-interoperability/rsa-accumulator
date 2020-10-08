@@ -1,5 +1,6 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.4.0'
+    id 'maven-publish'
 }
 
 repositories {
@@ -27,5 +28,16 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
         apiVersion = "1.4"
         jvmTarget = "1.8"
         javaParameters = true
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'res.dlt.accumulator'
+            artifactId = 'rsa-accumulator'
+            version = '0.1'
+            from components.java
+        }
     }
 }
