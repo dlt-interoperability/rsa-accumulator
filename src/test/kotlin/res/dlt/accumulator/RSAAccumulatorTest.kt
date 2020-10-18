@@ -16,9 +16,13 @@ class RSAAccumulatorTest {
     @Test fun addElement() {
         val accumulator = RSAAccumulator.newInstance()
         val elementToAdd = BigInteger.ONE
+        val notAddedElement = BigInteger.TEN
         val (newAccumulator, addedElement) = add(elementToAdd).run(accumulator)
-        assertEquals(elementToAdd, addedElement, "Function should return added element")
-        assertTrue(newAccumulator.data.contains(elementToAdd), "New accumulator should contain added element")
+        assertFalse(newAccumulator.data.contains(notAddedElement), "Element not added should not be member")
+        assertNotEquals(accumulator, newAccumulator,
+                "Initial accumulator and accumulator after addition should be different.")
+        assertEquals(elementToAdd, addedElement, "Function should return added element.")
+        assertTrue(newAccumulator.data.contains(elementToAdd), "New accumulator should contain added element.")
     }
 
     @Test fun deleteElement() {
@@ -59,10 +63,11 @@ fun addCreateProofAndVerify(accumulator: RSAAccumulator, element: BigInteger): R
 fun addAndDelete(accumulator: RSAAccumulator, elementPair: Pair<BigInteger, BigInteger>): RSAAccumulator {
     val newAcc1 = add(elementPair.first).run(accumulator).a
     val newAcc2 = add(elementPair.second).run(newAcc1).a
-    assertTrue(newAcc2.data.contains(elementPair.second))
+    assertNotEquals(newAcc1.a, newAcc2.a, "The accumulators with elements 1 and 1 and 2 should be different")
+    assertTrue(newAcc2.data.contains(elementPair.second), "Accumulator 2 should contain second element")
     val newAcc3 = delete(elementPair.second).run(newAcc2).a
     assertEquals(newAcc1.a, newAcc3.a,
             "The accumulator with element 2 deleted should be the same as the one before it was added")
-    assertFalse(newAcc2.data.contains(elementPair.second))
+    assertFalse(newAcc3.data.contains(elementPair.second), "Accumulator 3 should not contain second element")
     return newAcc3
 }
