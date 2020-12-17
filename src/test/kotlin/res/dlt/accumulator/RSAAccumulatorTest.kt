@@ -15,40 +15,33 @@ class RSAAccumulatorTest {
 
     @Test fun addElement() {
         val accumulator = RSAAccumulator.newInstance()
-        val elementToAdd = BigInteger.ONE
-        val notAddedElement = BigInteger.TEN
-        val (newAccumulator, addedElement) = add(elementToAdd).run(accumulator)
-        assertFalse(newAccumulator.data.contains(notAddedElement), "Element not added should not be member")
+        val elementToAdd = "a"
+        val primeElementToAdd = hashStringToBigInt(elementToAdd)
+        val notAddedElement = "b"
+        val primeElementNotAdded = hashStringToBigInt(notAddedElement)
+        val (newAccumulator, addedElement) = add(primeElementToAdd).run(accumulator)
+        assertFalse(newAccumulator.data.contains(primeElementNotAdded), "Element not added should not be member")
         assertNotEquals(accumulator, newAccumulator,
                 "Initial accumulator and accumulator after addition should be different.")
-        assertEquals(elementToAdd, addedElement, "Function should return added element.")
-        assertTrue(newAccumulator.data.contains(elementToAdd), "New accumulator should contain added element.")
+        assertEquals(primeElementToAdd, addedElement, "Function should return added element.")
+        assertTrue(newAccumulator.data.contains(primeElementToAdd), "New accumulator should contain added element.")
     }
 
     @Test fun deleteElement() {
         val accumulator = RSAAccumulator.newInstance()
 
-        listOf(BigInteger("2"),
-                BigInteger("3"),
-                BigInteger("4"),
-                BigInteger("5"),
-                BigInteger("6"),
-                BigInteger("7"),
-                BigInteger("8"))
-                .zipWithNext { element1, element2 -> Pair(element1, element2) }
+        listOf("a","b","c","d","e","f","g","h")
+                .zipWithNext { element1, element2 ->
+                    Pair(hashStringToBigInt(element1), hashStringToBigInt(element2)) }
                 .fold(accumulator, ::addAndDelete)
     }
 
     @Test fun createAndVerifyProof() {
         val accumulator = RSAAccumulator.newInstance()
 
-        listOf(BigInteger("2"),
-                BigInteger("3"),
-                BigInteger("4"),
-                BigInteger("5"),
-                BigInteger("6"),
-                BigInteger("7"),
-                BigInteger("8")).fold(accumulator, ::addCreateProofAndVerify)
+        listOf("a","b","c","d","e","f","g","h")
+                .map { hashStringToBigInt(it) }
+                .fold(accumulator, ::addCreateProofAndVerify)
     }
 }
 
