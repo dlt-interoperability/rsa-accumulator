@@ -14,8 +14,7 @@ data class RSAAccumulator(
         val data: HashMap<BigInteger, BigInteger>
 ) {
     companion object {
-        private const val RSA_MOD_SIZE = 1024
-        private const val RSA_PRIME_SIZE = RSA_MOD_SIZE / 2 - 1
+        private const val RSA_PRIME_SIZE = 1024
         const val PRIME_CERTAINTY = 5
 
         fun newInstance(
