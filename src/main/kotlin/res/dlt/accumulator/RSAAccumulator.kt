@@ -10,8 +10,7 @@ data class RSAAccumulator(
         val p: BigInteger,
         val q: BigInteger,
         val n: BigInteger,
-        val phi: BigInteger,
-        val data: HashMap<BigInteger, BigInteger>
+        val phi: BigInteger
 ) {
     companion object {
         private const val RSA_PRIME_SIZE = 1024
@@ -36,21 +35,17 @@ data class RSAAccumulator(
             val a0 = randomBigInteger(BigInteger.ZERO, n, seed3).pow(2).mod(n)
             val a = a0
 
-            return RSAAccumulator(a, a0, p, q, n, phi, hashMapOf())
+            return RSAAccumulator(a, a0, p, q, n, phi)
         }
     }
 }
 
 fun add(key: BigInteger) = State<RSAAccumulator, BigInteger> { accumulator ->
-    if (accumulator.data.containsKey(key)) {
-        Tuple2(accumulator, key)
-    } else {
-        val (keyPrime, nonce) = hashToPrime(key)
-        val newAccumulatorVal = accumulator.a.modPow(keyPrime, accumulator.n)
-        accumulator.data[key] = nonce
-        val newAccumulator = accumulator.copy(a = newAccumulatorVal)
-        Tuple2(newAccumulator, key)
-    }
+    Tuple2(accumulator, key)
+    val (keyPrime, nonce) = hashToPrime(key)
+    val newAccumulatorVal = accumulator.a.modPow(keyPrime, accumulator.n)
+    val newAccumulator = accumulator.copy(a = newAccumulatorVal)
+    Tuple2(newAccumulator, key)
 }
 
 /**
@@ -59,16 +54,11 @@ fun add(key: BigInteger) = State<RSAAccumulator, BigInteger> { accumulator ->
  * z' = z^{x^-1 mod phi(N)} mod N. Phi(N) is the Euler totient function phi(N) = (p - 1)(q - 1).
  */
 fun delete(key: BigInteger) = State<RSAAccumulator, BigInteger> { accumulator ->
-    if (!accumulator.data.containsKey(key)) {
-        Tuple2(accumulator, key)
-    } else {
-        val (keyPrime, _) = hashToPrime(key)
-        val keyInverseModPhi = inverseModPhi(x = keyPrime, phi = accumulator.phi)
-        val newAccumulatorVal = accumulator.a.modPow(keyInverseModPhi, accumulator.n)
-        accumulator.data.remove(key)
-        val newAccumulator = accumulator.copy(a = newAccumulatorVal)
-        Tuple2(newAccumulator, key)
-    }
+    val (keyPrime, _) = hashToPrime(key)
+    val keyInverseModPhi = inverseModPhi(x = keyPrime, phi = accumulator.phi)
+    val newAccumulatorVal = accumulator.a.modPow(keyInverseModPhi, accumulator.n)
+    val newAccumulator = accumulator.copy(a = newAccumulatorVal)
+    Tuple2(newAccumulator, key)
 }
 
 /**
@@ -79,19 +69,15 @@ fun delete(key: BigInteger) = State<RSAAccumulator, BigInteger> { accumulator ->
  * can be verified in constant time by checking that pi ^ x mod N = z.
  */
 fun createProof(key: BigInteger) = State<RSAAccumulator, Either<Error, Proof>> { accumulator ->
-    if (!accumulator.data.containsKey(key)) {
-        Tuple2(accumulator, Left(Error("Accumulator does not contain $key")))
-    } else {
-        val (keyPrime, _) = hashToPrime(key)
-        val keyInverseModPhi = inverseModPhi(x = keyPrime, phi = accumulator.phi)
-        val proof = accumulator.a.modPow(keyInverseModPhi, accumulator.n)
-        Tuple2(accumulator, Right(Proof(
-                key = key,
-                a = accumulator.a,
-                proof = proof,
-                n = accumulator.n
-        )))
-    }
+    val (keyPrime, _) = hashToPrime(key)
+    val keyInverseModPhi = inverseModPhi(x = keyPrime, phi = accumulator.phi)
+    val proof = accumulator.a.modPow(keyInverseModPhi, accumulator.n)
+    Tuple2(accumulator, Right(Proof(
+            key = key,
+            a = accumulator.a,
+            proof = proof,
+            n = accumulator.n
+    )))
 }
 
 fun verifyProof(proof: BigInteger, key: BigInteger, n: BigInteger, a: BigInteger): Boolean {
